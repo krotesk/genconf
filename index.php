@@ -28,50 +28,68 @@
 <!--                        <label for="ip_addr"><b>Введите IP-адрес телефона:</b></label>
                         <input name="ip_addr" type="text" maxlength="15" placeholder="172.16.0.255"><br> -->
                         <label for="exten"><b>Введите требуемый номер телефона:</b>
-                        <input name="exten" type="text" maxlength="4">
+                        <input name="exten" type="text" maxlength="4" placeholder="123">
+                        </label>
+                        <br>
+                        <label for="vendor"><b>Выберите производителя телефона:</b><br>
+                    	    <input type="radio" name="vendor" value="gs">Grandstream<br>
+                            <input type="radio" name="vendor" value="yl" checked>Yealink<br>
                         </label>
                         <br>
                         <input type="submit" name="submit" value="Запросить" method="post">
                     </form>
 
         <?php
-	$exten = 8000;
+	//Переменные
+	$exten = 123;
         $ip_addr = $_GET['ip_addr'];
         $exten = $_GET['exten'];
-
+        $vendor = $_GET['vendor'];
+	$sip_serv = '10.10.150.250';
+	$ntp_serv = 'ntp3.vniiftri.ru';
+	//Подключение к БД
         include ("blocks/bd.php");
+	//Каталог конфигов
+	$filepath = "/var/www/html/gs/";
+	//Расширение файлов
+	if ($vendor == 'gs'){
+	    $filepost = ".xml";
+	    }
+	else if ($vendor == 'yl'){
+	    $filepost = ".conf";
+	}
+	//Имена файлов с путями и расширениями
+	$filename = $exten . $filepost;
+	$fullname = $filepath . $filename;
+	
+	if (empty($vendor)){
+	    $vendor = 'yl';
+            exit ("Необходимо выбрать производителя телефона");
+        }
+
 
 	if (empty($exten)){
-            echo "Номер телефона не может быть пустым";
-	    break;
+            exit ("Номер телефона не может быть пустым");
         }
-	else {
-	    if (file_exists($filename)){
-		echo "Файл ${filename} уже существует и будет перезаписан";
-	    }
+	else if (file_exists($filename)){
+		echo "Файл ${filename} уже существует и будет перезаписан <br>";
 	}
 
-	$filepath = "/var/www/html/gs/";
-	$filename = $exten . ".xml";
-	$fullname = $filepath . $filename;
-//	echo $fullname;
-
-
-
-	$fconf = fopen($fullname, 'w') or die("не удалось открыть файл");
+	$fconf = fopen($filename, 'w') or die("не удалось открыть файл");
 
 	$query = "SELECT data FROM sip WHERE id = '${exten}' and keyword = 'secret';";
 	$result = mysql_query($query, $db) or die("Query failed");
-//	var_dump($query);
-//	var_dump($result);
 	$ext_secret = mysql_fetch_array($result)[0];
-//	var_dump($ext_secret);
-//	echo $exten . ':' . $ext_secret;
 	mysql_free_result($result);
 	mysql_close($db);
-        include ("provisioning_gs.php");
-//	var_dump($template);
-//	echo $template;
+	
+	if ($vendor == 'gs'){
+        include ("gs_template.php");	    
+	    }
+	else if ($vendor == 'yl'){
+        include ("yl_template.php");
+	}
+	
 	fwrite($fconf, $template);
 	fclose($fconf);
 	
@@ -83,9 +101,11 @@
 		echo "Файл ${filename} сохранен";
 	    }
 	}
-
+	
+	echo '<br>  <hr align="left" width="100%" size="2" color="#ff0000" />';
 	?>
-
 		</td>
 	    </tr>
 	</table>
+    </body>
+</html>
