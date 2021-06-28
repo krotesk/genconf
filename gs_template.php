@@ -67,7 +67,7 @@ $template = <<<EOD
 		</item>                                       
 		<item name="dateTime">
 			<part name="showOnStatusBar">Yes</part>
-			<part name="timezone">Moscow, Russia</part>
+			<part name="timezone">Ekaterinburg, Russia</part>
 		</item>                                           
 		<item name="dateTime.ntp">
 			<part name="updateInterval">1440</part>
@@ -138,6 +138,12 @@ $template = <<<EOD
 		</item>    
 		<item name="language">
 			<part name="gui">Russian</part>
+		</item>
+		<item name="users.user">
+			<part name="password">${device_password}</part>
+		</item>                                                               
+		<item name="users.admin">
+			<part name="password">${device_password}</part>
 		</item>                                                               
 	</config>
 </gs_provision>

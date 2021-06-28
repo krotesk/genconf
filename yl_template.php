@@ -39,7 +39,7 @@ lang.gui = Russian
 lang.wui = Russian
 #### по умолчанию rtp-порты 11780-12780
 ### User and Admin Login
-security.user_password = admin:Kolodakart.20
-security.user_password = user:Kolodakart.20
+security.user_password = admin:${device_password}
+security.user_password = user:${device_password}
 EOD;
 ?>
