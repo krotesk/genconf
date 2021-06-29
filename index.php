@@ -25,17 +25,22 @@
             <tr>
                 <td>
                     <form action="" method="get" name="gs_provisioning">
-<!--                        <label for="ip_addr"><b>Введите IP-адрес телефона:</b></label>
-                        <input name="ip_addr" type="text" maxlength="15" placeholder="172.16.0.255"><br>-->
+                        <label for="ip_addr"><b>Введите IP-адрес телефона:</b></label>
+                    	    <input name="ip_addr" type="text" maxlength="15" placeholder="192.168.55.155"><br>
                         <label for="exten"><b>Введите требуемый номер телефона:</b>
-                        <input name="exten" type="text" maxlength="4" placeholder="123">
+                    	    <input name="exten" type="text" maxlength="4" placeholder="1955">
                         </label>
                         <br>
                         <label for="vendor"><b>Выберите производителя телефона:</b><br>
-                    	    <input type="radio" name="vendor" value="gs">Grandstream<br>
+			    <input type="radio" name="vendor" value="gs">Grandstream<br>
                             <input type="radio" name="vendor" value="yl" checked>Yealink<br>
                         </label>
                         <br>
+                        <label for="vendor"><b>Телефон в офисе или в магазине:</b><br>
+                    	    <input type="radio" name="location" value="office">Офис<br>
+                            <input type="radio" name="location" value="magazin" checked>Магазин<br>
+                            <input type="radio" name="location" value="overnat">За NAT<br>
+                        </label>
                         <input type="submit" name="submit" value="Запросить" method="post">
                     </form>
 
@@ -46,6 +51,7 @@
         $ip_addr = $_GET['ip_addr'];
         $exten = $_GET['exten'];
         $vendor = $_GET['vendor'];
+        $location = $_GET['location'];
 	//Подключение к БД
         include ("blocks/bd.php");
 
@@ -54,39 +60,48 @@
 	    $filepost = ".xml";
 	    }
 	else if ($vendor == 'yl'){
-	    $filepost = ".conf";
+	    $filepost = ".cfg";
 	}
+	
 	//Имена файлов с путями и расширениями
 	$filename = $exten . $filepost;
 	$fullname = $filepath . $filename;
+	
 	//Имя файла для конфига елинка
 	$mac = shell_exec("/sbin/arp | grep $ip_addr | awk '{print $3}'");
-	$mac2 = str_replace(":", "", $mac);
-	//echo $mac2;
+	$mac2 = trim(str_replace(":", "", $mac));
+	$fullname_tftp = $tftp_path . $mac2 . $filepost;
+//	var_dump($mac2);
 
+	//Выбор адреса сервера
+	if ($location == 'office'){
+	    $sip_serv = $sip_serv_office;
+	    $ntp_serv = $ntp_serv_office;
+	    }
+	else if ($location == 'magazin'){
+	    $sip_serv = $sip_serv_magazin;
+	    $ntp_serv = $ntp_serv_magazin;
+	}
+	else if ($location == 'overnat'){
+	    $sip_serv = $sip_serv_overnat;
+	    $ntp_serv = $ntp_serv_overnat;
+	}
+	
 	if (empty($vendor)){
 	    $vendor = 'yl';
             exit ("Необходимо выбрать производителя телефона");
         }
 
-
 	if (empty($exten)){
             exit ("Номер телефона не может быть пустым");
-//	    break;
         }
 	else if (file_exists($filename)){
 		echo "Файл ${filename} уже существует и будет перезаписан <br>";
 	}
 
-	$fconf = fopen($filename, 'w') or die("не удалось открыть файл");
-
 	$query = "SELECT data FROM sip WHERE id = '${exten}' and keyword = 'secret';";
 	$result = mysql_query($query, $db) or die("Query failed");
-//	var_dump($query);
-//	var_dump($result);
 	$ext_secret = mysql_fetch_array($result)[0];
-//	var_dump($ext_secret);
-//	echo $exten . ':' . $ext_secret;
 	mysql_free_result($result);
 	mysql_close($db);
 	
@@ -96,14 +111,25 @@
 	else if ($vendor == 'yl'){
         include ("yl_template.php");
 	}
-	
-//	var_dump($template);
-//	echo $template;
+
+	$fconf = fopen($filename, 'w+') or die("не удалось открыть файл");
 	fwrite($fconf, $template);
 	fclose($fconf);
+
+	echo '<br>'; var_dump($filename);
+	echo '<br>'; var_dump($fullname_tftp);
+
+	if (!empty($mac)){
+	    $fconf2 = fopen($fullname_tftp, 'w+') or die("не удалось открыть файл на tftp");
+	    fwrite($fconf2, $template);
+	    fclose($fconf2);
+//	    shell_exec("/bin/cp $filename $fullname_tftp");
+//	    copy($filename $fullname_tftp);
+//	    echo '<br>' . $fullname_tftp;
+	}
 	
 	if (empty($exten)){
-            echo "";
+            echo "Номер не может быть пустым";
         }
 	else {
 	    if (file_exists($filename)){

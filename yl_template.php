@@ -31,6 +31,10 @@ static.auto_provision.dhcp_option.enable = 0
 static.auto_provision.pnp_enable = 0
 static.auto_provision.power_on = 0
 ### Network
+static.auto_provision.attempt_expired_time = 300
+static.auto_provision.dhcp_option.enable = 0
+static.auto_provision.pnp_enable = 0
+static.auto_provision.server.url = ${sip_serv}
 static.network.dhcp_host_name = tlf_${exten}
 voice_mail.number.1 = *97
 features.relog_offtime = 15
@@ -39,7 +43,7 @@ lang.gui = Russian
 lang.wui = Russian
 #### по умолчанию rtp-порты 11780-12780
 ### User and Admin Login
-security.user_password = admin:${device_password}
-security.user_password = user:${device_password}
+security.user_password = admin:${device_admpass}
+security.user_password = user:${device_userpass}
 EOD;
 ?>

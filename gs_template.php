@@ -140,10 +140,10 @@ $template = <<<EOD
 			<part name="gui">Russian</part>
 		</item>
 		<item name="users.user">
-			<part name="password">${device_password}</part>
+			<part name="password">${device_userpass}</part>
 		</item>                                                               
 		<item name="users.admin">
-			<part name="password">${device_password}</part>
+			<part name="password">${device_admpass}</part>
 		</item>                                                               
 	</config>
 </gs_provision>
