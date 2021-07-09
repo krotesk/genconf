@@ -9,7 +9,9 @@
         $ntp_serv_overnat = 'ntp3.vniiftri.ru';
         //Каталог конфигов
         $filepath = "/var/www/localhost/htdocs/pbx/";
+        //Каталог TFTP
         $tftp_path = "/tftpboot/";
+        //Пароли админа и юзера
         $device_admpass = "59ajBXPh";
         $device_userpass = "wosOe5I7";
 ?>

@@ -30,7 +30,7 @@
                         <label for="exten"><b>Введите требуемый номер телефона:</b>
                     	    <input name="exten" type="text" maxlength="4" placeholder="1955">
                         </label>
-                        <br>
+                        <br><br>
                         <label for="vendor"><b>Выберите производителя телефона:</b><br>
 			    <input type="radio" name="vendor" value="gs">Grandstream<br>
                             <input type="radio" name="vendor" value="yl" checked>Yealink<br>
@@ -41,17 +41,31 @@
                             <input type="radio" name="location" value="magazin" checked>Магазин<br>
                             <input type="radio" name="location" value="overnat">За NAT<br>
                         </label>
+                        <br>
+                        <label for="adresses_type"><b>Метод адресации:</b><br>
+                    	    <input type="radio" name="adresses_type" value="static">Статическая | <input name="ip_addr2" type="text" maxlength="15" placeholder="192.168.55.155"><br>
+                            <input type="radio" name="adresses_type" value="dhcp" checked>DHCP<br>
+<!--                            <?php
+                            $adresses_type = $_GET['adresses_type'];
+                            if ($adresses_type == 'static'){
+                        	echo "Статическая адресация";
+                    		echo '<label for="ip_addr2"><b>Введите новый IP-адрес телефона:</b></label><input name="ip_addr2" type="text" maxlength="15" placeholder="192.168.55.155"><br>';
+				}
+			    ?> -->
+			</label>
                         <input type="submit" name="submit" value="Запросить" method="post">
                     </form>
 
         <?php
         //Переменные
         //Подключение основных переменных
-	include ("values.php");
+	include ("blocks/values.php");
         $ip_addr = $_GET['ip_addr'];
+        $ip_addr2 = $_GET['ip_addr2'];
         $exten = $_GET['exten'];
         $vendor = $_GET['vendor'];
         $location = $_GET['location'];
+        $adresses_type = $_GET['adresses_type'];
 	//Подключение к БД
         include ("blocks/bd.php");
 
@@ -87,7 +101,9 @@
 	    $ntp_serv = $ntp_serv_overnat;
 	}
 	
-	if (empty($vendor)){
+
+
+	if (empty($adresses_type)){
 	    $vendor = 'yl';
             exit ("Необходимо выбрать производителя телефона");
         }
@@ -106,18 +122,28 @@
 	mysql_close($db);
 	
 	if ($vendor == 'gs'){
-        include ("gs_template.php");	    
+        include ("blocks/gs_template.php");	    
 	    }
 	else if ($vendor == 'yl'){
-        include ("yl_template.php");
+        include ("blocks/yl_template.php");
 	}
+	include("blocks/yl_temp_net.php");
+	
+	if ($adresses_type == 'dhcp' && $vendor == 'yl'){
+	    echo "Динамическая адресация";
+	    }
+	else if ($adresses_type == 'static' && $vendor == 'yl'){
+	//    echo "Статический адрес";
+	    $template = $template . "\n" . $network_template;
+	//    echo $template;
+	    }
 
 	$fconf = fopen($filename, 'w+') or die("не удалось открыть файл");
 	fwrite($fconf, $template);
 	fclose($fconf);
 
-	echo '<br>'; var_dump($filename);
-	echo '<br>'; var_dump($fullname_tftp);
+	//echo '<br>'; var_dump($filename);
+	//echo '<br>'; var_dump($fullname_tftp);
 
 	if (!empty($mac)){
 	    $fconf2 = fopen($fullname_tftp, 'w+') or die("не удалось открыть файл на tftp");
