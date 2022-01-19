@@ -71,7 +71,7 @@
                             <label
 
                             <?php
-                            include ("values.php");
+                            include ("blocks/values.php");
                             var_dump($ip_mode);
                             if ($ip_mode = 'dhcp'){
                         	echo "hidden";
@@ -99,7 +99,7 @@
         <?php
         //Переменные
         //Подключение основных переменных
-	//include ("values.php");
+	//include ("blocks/values.php");
         $ip_addr = $_GET['ip_addr'];
         $exten = $_GET['exten'];
         $vendor = $_GET['vendor'];
@@ -162,10 +162,10 @@
 	mysql_close($db);
 
 	if ($vendor == 'gs'){
-        include ("gs_template.php");
+        include ("blocks/gs_template.php");
 	    }
 	else if ($vendor == 'yl'){
-        include ("yl_template.php");
+        include ("blocks/yl_template.php");
 	}
 
 //	var_dump($template);
