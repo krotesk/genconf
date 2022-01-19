@@ -6,8 +6,8 @@
         //Каталог конфигов
         $filepath = "/var/www/localhost/htdocs/pbx/genconf/";
         $tftppath = "/tftpboot/";
-        $device_password_a = "Kolodakart.20";
-        $device_password_u = "Kolodakart.20";
+        $device_password_a = "adminpass";
+        $device_password_u = "userpass";
         //Настройка ip-адресации
         $ip_mode = 'dhcp';
         // 'static' or 'dhcp'

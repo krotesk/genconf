@@ -1,20 +1,18 @@
 <?php
         //Глобальные параметры
-        $exten = 1955;
-        //Настройки для офиса
-        $sip_serv_office = '192.168.55.250';
-        $ntp_serv_office = 'ntp3.vniiftri.ru';
-        //Настройки для VPN
-        $sip_serv_magazin = '192.168.100.250';
-        $ntp_serv_magazin = 'ntp3.vniiftri.ru';
-        // Настройки при подключении за NAT
-        $sip_serv_overnat = '85.192.*.250';
-        $ntp_serv_overnat = 'ntp3.vniiftri.ru';
-        //Каталог конфигов (веб-каталог)
-        $filepath = "/var/www/localhost/htdocs/pbx/";
-        //Каталог TFTP
-        $tftp_path = "/tftpboot/";
-        //Пароли админа и юзера
-        $device_admpass = "59ajBXPh";
-        $device_userpass = "wosOe5I7";
+        $exten = 123;
+        $sip_serv = '10.10.150.250';
+        $ntp_serv = 'ntp3.vniiftri.ru';
+        //Каталог конфигов
+        $filepath = "/var/www/localhost/htdocs/pbx/genconf/";
+        $tftppath = "/tftpboot/";
+        $device_password_a = "adminpass";
+        $device_password_u = "userpass";
+        //Настройка ip-адресации
+        $ip_mode = 'dhcp';
+        // 'static' or 'dhcp'
+        $ip_gate = '10.10.150.1';
+        $ip_mask = '255.255.255.0';
+        $ip_dns = '10.10.150.250';
+        $ip_dns2 = '8.8.8.8';
 ?>
