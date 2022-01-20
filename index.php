@@ -49,10 +49,10 @@
         </style>
     </head>
 
-    <body height="100%">
+    <body height="100%" bgcolor="CCCCCC">
         <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" bordercolor="#FFFFFF" class="main_border">
             <tr>
-                <td colspan="3" bgcolor="0066FF"><img src="blocks/head011.png" width="500" height="97"></td>
+                <td colspan="3" bgcolor="02754C"><img src="blocks/head011.png" width="500" height="97"></td>
             </tr>
         </table>
 
@@ -66,24 +66,28 @@
                         <label for="current_ip"><b>Введите текущий IP-адрес телефона:</b></label>
                         <input name="current_ip" type="text" maxlength="15" placeholder="172.16.0.255">
                         <br>
+			
+			<?php
+                        include ("blocks/values.php");
+                        if ($ip_mode == "mixed") {
+                            echo "<p><label for='ip_mode'>Выберите тип адреса для текущего телефона:</label><br>
+                    	          <input name='ip_mode' type='radio' value='static'>Статический<br>
+                     		  <input name='ip_mode' type='radio' value='dhcp' checked>Автоматический<br>";
+                    	}
+                    	
+			$ip_mode = $_GET['ip_mode'];
 
-                        <div>
-                            <label
-
-                            <?php
-                            include ("blocks/values.php");
-                            var_dump($ip_mode);
-                            if ($ip_mode = 'dhcp'){
-                        	echo "hidden";
-                    	    }
-                    	    ?>
-
-                            for="ip_addr"><b>Введите требуемый IP-адрес телефона:</b>
-                            <input name="ip_addr" type="text" maxlength="15" placeholder="172.16.0.255">
-	                    <br>(Или оставьте пустым при автоматической настройке ip-адреса)
-	                    </label>
-    	                    <br>
-   	                </div>
+                        if ($ip_mode != "dhcp") {
+                            echo "<label for='ip_addr'><b>Введите требуемый IP-адрес телефона:</b>
+                            <input name='ip_addr' type='text' maxlength='15' placeholder='172.16.0.255'>
+                            <br>(Или оставьте пустым при автоматической настройке ip-адреса)</label>
+                            <br>";
+                        } else {
+                            echo "<br>";
+                        }
+                        ?>
+                        
+                        
                         <label for="exten"><b>Введите требуемый номер телефона:</b>
                         <input name="exten" type="text" maxlength="4" placeholder="123">
                         </label>
