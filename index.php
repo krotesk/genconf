@@ -98,12 +98,11 @@
 
         <?php
         //Переменные
-        //Подключение основных переменных
-	//include ("blocks/values.php");
         $ip_addr = $_GET['ip_addr'];
         $exten = $_GET['exten'];
         $vendor = $_GET['vendor'];
         $current_ip = $_GET['current_ip'];
+
 	//Подключение к БД
         include ("blocks/bd.php");
 
@@ -120,27 +119,38 @@
 	    $filepost = ".cfg";
 	    $fileprefix = "";
 	}
+
 	//Имена файлов с путями и расширениями
 	$filename = $exten . $filepost;
 	$filename_mac = $fileprefix . $mac2 . $filepost;
 	$fullname = $filepath . $filename;
-	//Имя файла для конфига елинка
+
+	//Имя файла для конфига
 //	var_dump($ip_addr);
 	$mac = shell_exec("/sbin/arp | /bin/grep $ip_addr | /bin/awk '{print $3}'");
+
+	//Проверка на пустой мак-адрес	
+	if (empty($mac)){
+	    $fullname_mac = $fullname;
+	}
+	else {
 	$mac2 = str_replace(":", "", $mac);
 	$mac3 = substr($mac2, 0, -1);
 	$filename_mac = $fileprefix . $mac3 . $filepost;
 	$fullname_mac = $filepath . $filename_mac;
+	}
+	
 //	var_dump($mac3);
 //	var_dump($filename);
 //	var_dump($filename_mac);
-
+	
+	//Проверка на пустое поле производитель
 	if (empty($vendor)){
 	    $vendor = 'yl';
-//            exit ("Необходимо выбрать производителя телефона");
+//          exit ("Необходимо выбрать производителя телефона");
         }
 
-
+	//Проверка на пустой экстен
 	if (empty($exten)){
             exit ("Номер телефона не может быть пустым");
 //	    break;
@@ -148,6 +158,7 @@
 	else if (file_exists($filename) or file_exists($filename_mac)){
 		echo "Файлы ${filename} или ${filename_mac} уже существуют и будут перезаписаны<br>";
 	}
+
 	$fconf = fopen($filename, 'w') or die("не удалось открыть файл");
 	$fconf_mac = fopen($filename_mac, 'w') or die("не удалось открыть файл");
 
